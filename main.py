@@ -1,41 +1,61 @@
 import random
 import time
+import threading
 
 coins = 100
 
+#функция таймера
+def timer():
+    while True:
+        time.sleep(30)
+        print("Вы проиграли!")
+        menu()
+        t.cancel()
+
+t = threading.Thread(target=timer)
+
+#проверка ввода на число
+def get_number(prompt):
+    while True:
+        user_input = input(prompt)
+        try:
+            return int(user_input)
+        except ValueError:
+            print("Ошибка! Пожалуйста, введите число!")
+
 def game():
+    start = time.time()
+#Задача параметров
     print("Включать подсказки?", '\n', "1 - ДА", '\n', "2 - НЕТ")
     helps_toggle = get_number("Ответ: ")
 
     radius = get_number("Число в радиусе: ")
-    while radius > 100:
-        print("Радиус должен быть меньше 100!")
+    while radius > 100 or radius < 10:
+        print("Радиус должен быть меньше 100 и больше 10!")
         radius = get_number("Число в радиусе: ")
 
-    trys = get_number("Количество попыток: ")
-    while trys > 100:
-        print("Попытки должныть быть меньше 100!")
-        trys = get_number("Количество попыток: ")
+    stav = get_number("Введите ставку: ")
 
-#----------------------------------------------------------------
+    trys = random.uniform(radius / 2, radius)
+    trys = round(trys)
+
+#основной модуль
     randNum = random.randint(0, radius)
 
-    start_time = time.perf_counter()
-    time.sleep(60)
-    end_time = time.perf_counter()
-
-    execution_time = int(end_time - start_time)
-
+    t.start()
     while True:
         ans = get_number("Введите число: ")
 
         if ans == randNum:
-            print("вы выиграли!, вы угадали число за", 60 - execution_time, "секунд")
+            print("вы выиграли!, вы угадали число за", "секунд")
+            win(start, stav)
             menu()
+            t.cancel()
 
-        elif trys == 1 or execution_time == 60:
-            print("Вы проиграли(")
+        elif trys == 0:
+            print("Вы проиграли!")
             menu()
+            t.cancel()
 
         else:
             if helps_toggle == 1:
@@ -53,14 +73,26 @@ def game():
                 trys -= 1
                 continue
 
-def get_number(prompt):
-    while True:
-        user_input = input(prompt)
-        try:
-            return int(user_input)
-        except ValueError:
-            print("Ошибка! Пожалуйста, введите число!")
+def win(start_time, stavk):
+    win_time = time.time() - start_time
+    win_time = round(win_time)
+    bonus = 50
 
+    if win_time < 15:
+        bonus -= win_time * 2
+
+    else:
+        bonus = 0
+
+        bonus -= (win_time * 2) - 15
+
+    winer = stavk * 2 + stavk / 100 * bonus
+
+    print("ваш выигрыш: ", winer)
+    print("Ваш бонус:", bonus)
+    print("Вы выиграли за", win_time, "секунд")
+
+#меню
 def menu():
     while True:
         print("Привет, это игра - угадай число, здесь ты должен угадывать число в выбранном диапозоне")
@@ -77,6 +109,12 @@ def menu():
 
         if choise == '3':
             print("баланс:",  coins)
+
+
+
+
+menu()
+
 
 
 
