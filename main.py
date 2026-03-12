@@ -35,6 +35,9 @@ def game():
         radius = get_number("Число в радиусе: ")
 
     stav = get_number("Введите ставку: ")
+    while coins < stav:
+        print("Недостаточно монет!")
+        stav = get_number("Введите ставку: ")
 
     trys = random.uniform(radius / 2, radius)
     trys = round(trys)
@@ -42,12 +45,12 @@ def game():
 #основной модуль
     randNum = random.randint(0, radius)
 
+    t = threading.Thread(target=timer)
     t.start()
     while True:
         ans = get_number("Введите число: ")
 
         if ans == randNum:
-            print("вы выиграли!, вы угадали число за", "секунд")
             win(start, stav)
             menu()
             t.cancel()
@@ -84,13 +87,17 @@ def win(start_time, stavk):
     else:
         bonus = 0
 
-        bonus -= (win_time * 2) - 15
+        bonus -= (win_time - 15) * 2
 
     winer = stavk * 2 + stavk / 100 * bonus
+    winer = round(winer)
 
-    print("ваш выигрыш: ", winer)
-    print("Ваш бонус:", bonus)
-    print("Вы выиграли за", win_time, "секунд")
+    coins =+ winer
+
+    print('\n', "ваш выигрыш:", winer)
+    print(" Ваш бонус:", bonus)
+    print(" Вы выиграли за", win_time, "секунд")
+    print(" Ваш баланс:", coins - stavk + winer, '\n')
 
 #меню
 def menu():
