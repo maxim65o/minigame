@@ -116,12 +116,4 @@ def menu():
 
         if choise == '3':
             print("баланс:",  coins)
-
-
-
-
 menu()
-
-
-
-
